@@ -11,16 +11,48 @@ export type CodeConnectExample = {
   caveats: string[]
 }
 
-const template = (body: string) => `import figma from '@figma/code-connect'
+const snippets: Record<string, string> = {
+  "get-string": "const label = instance.getString('Label')\n\nexport default { example: figma.tsx`<Button>${label}</Button>` }",
+  "get-boolean": "const disabled = instance.getBoolean('Disabled')\nconst { renderProp } = figma.helpers.react\n\nexport default { example: figma.tsx`<Button${renderProp('disabled', disabled)}>Continue</Button>` }",
+  "get-enum": "const size = instance.getEnum('Size', { Small: 'sm', Large: 'lg' })\nconst { renderProp } = figma.helpers.react\n\nexport default { example: figma.tsx`<Button${renderProp('size', size)}>Continue</Button>` }",
+  "get-property-value": "const state = instance.getPropertyValue('State')\n\nexport default { example: figma.code`State: ${state}` }",
+  "get-instance-swap": "const icon = instance.getInstanceSwap('Leading icon')\nconst renderedIcon = icon?.executeTemplate().example\n\nexport default { example: figma.tsx`<Button icon={${renderedIcon}}>Continue</Button>` }",
+  "get-slot": "const actions = instance.getSlot('Actions')\n\nexport default { example: figma.tsx`<Card>${actions}</Card>` }",
+  "slot-connected-instances": "const actions = instance.getSlot('Actions')\nconst children = actions?.connectedInstances.map(child => child.executeTemplate().example)\n\nexport default { example: figma.tsx`<Card>${children}</Card>` }",
+  "find-text": "const title = instance.findText('Title').__render__()\n\nexport default { example: figma.tsx`<Card title=\"${title}\" />` }",
+  "find-instance": "const avatar = instance.findInstance('Avatar')\n\nexport default { example: figma.code`Found layer: ${avatar.name}` }",
+  "find-connected-instance": "const avatar = instance.findConnectedInstance('design-system/avatar')\nconst rendered = avatar?.executeTemplate().example\n\nexport default { example: figma.tsx`<Card avatar={${rendered}} />` }",
+  "find-connected-instances": "const actions = instance.findConnectedInstances(\n  child => child.codeConnectId() === 'design-system/button',\n)\nconst rendered = actions.map(child => child.executeTemplate().example)\n\nexport default { example: figma.tsx`<Card>${rendered}</Card>` }",
+  "has-code-connect": "const child = instance.findInstance('Action')\nconst rendered = child.hasCodeConnect() ? child.executeTemplate().example : undefined\n\nexport default { example: figma.tsx`<Card>${rendered}</Card>` }",
+  "code-connect-id": "const child = instance.findInstance('Badge')\nconst childId = child.codeConnectId()\n\nexport default { example: figma.code`Connected template: ${childId}` }",
+  "execute-template": "const badge = instance.findConnectedInstance('design-system/status-badge')\nconst rendered = badge?.executeTemplate().example\n\nexport default { example: figma.tsx`<Card badge={${rendered}} />` }",
+  "template-id": "export default {\n  example: figma.tsx`<Button>Continue</Button>`,\n  id: 'design-system/button',\n}",
+  "metadata-nestable": "export default {\n  example: figma.tsx`<Avatar />`,\n  metadata: { nestable: true },\n}",
+  "metadata-props": "export default {\n  example: figma.tsx`<Badge>Ready</Badge>`,\n  metadata: { nestable: true, props: { role: 'status' } },\n}",
+  "explicit-imports": "export default {\n  example: figma.tsx`<Button>Continue</Button>`,\n  imports: [\"import { Button } from '@company/design-system'\"],\n}",
+  "conditional-rendering": "const dismissible = instance.getBoolean('Dismissible')\nconst handler = dismissible ? figma.helpers.react.function('() => {}') : undefined\nconst { renderProp } = figma.helpers.react\n\nexport default { example: figma.tsx`<Alert${renderProp('onDismiss', handler)} />` }",
+  "local-helpers": "import { toneMap } from './figma-helpers'\n\nconst tone = instance.getEnum('Tone', toneMap)\nexport default { example: figma.tsx`<Alert tone=\"${tone}\" />` }",
+  "react-helpers": "const disabled = instance.getBoolean('Disabled')\nconst { renderProp } = figma.helpers.react\n\nexport default { example: figma.tsx`<Button${renderProp('disabled', disabled)} />` }",
+  "render-prop": "const size = instance.getEnum('Size', { Default: undefined, Large: 'lg' })\nconst { renderProp } = figma.helpers.react\n\nexport default { example: figma.tsx`<Button${renderProp('size', size)} />` }",
+  "batch-templates": "// icon-template.figma.batch.ts\nimport figma from 'figma'\n\nexport default {\n  example: figma.tsx`<${figma.batch.name} />`,\n  id: figma.batch.id,\n}\n\n// Paired with a .figma.batch.json data file.",
+  "preview": "npx figma connect preview src/Button.figma.ts --inspect\nnpx figma connect preview src/Button.figma.ts --props \"Size=Large\"",
+  "publish": "FIGMA_ACCESS_TOKEN=*** npx figma connect publish --config figma.config.json --dry-run\nFIGMA_ACCESS_TOKEN=*** npx figma connect publish --config figma.config.json",
+  "parse": "npx figma connect parse --config figma.config.json --file src/Button.figma.ts --outFile code-connect.json",
+  "migrate": "npx figma connect migrate --dir src/components --dry-run\nnpx figma connect migrate --dir src/components --batch all",
+  "multi-config": "npx figma connect publish --config figma.web.json --label Web\nnpx figma connect publish --config figma.ios.json --label SwiftUI",
+  "custom-output": "const label = instance.getString('Label')\n\nexport default {\n  example: figma.swift`PrimaryButton(title: \\\"${label}\\\")`,\n  id: 'ios/primary-button',\n}"
+}
 
-export default figma.template({
-  id: 'button',
-  component: figma.selectedInstance,
-  ${body}
-})`
+const template = (body: string) => `// url=https://www.figma.com/design/FILE_KEY/Library?node-id=120-44
+// source=src/components/Button.tsx
+// component=Button
+import figma from 'figma'
+
+const instance = figma.selectedInstance
+${body}`
 
 const e = (slug:string,title:string,category:CodeConnectExample['category'],description:string,body:string,output:string,whenToUse:string,caveat:string, properties:FigmaProperty[] = [{label:'Component',value:'Button'}]):CodeConnectExample => ({
-  slug,title,category,description,figmaExample:{component:title,properties},templateCode:template(body),outputCode:output,whenToUse,caveats:[caveat]
+  slug,title,category,description,figmaExample:{component:title,properties},templateCode:template(snippets[slug] ?? body),outputCode:output,whenToUse,caveats:[caveat]
 })
 
 export const features: CodeConnectExample[] = [
