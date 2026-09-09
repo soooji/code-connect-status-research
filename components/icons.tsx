@@ -1,0 +1,5 @@
+import type { SVGProps } from 'react'
+export function Icon({name,...props}:{name:'arrow'|'copy'|'check'|'close'|'menu'|'external'|'chevron'|'github'}&SVGProps<SVGSVGElement>){
+ const p={arrow:<><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></>,copy:<><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M15 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h3"/></>,check:<path d="m5 12 4 4L19 6"/>,close:<><path d="m6 6 12 12M18 6 6 18"/></>,menu:<><path d="M4 7h16M4 12h16M4 17h16"/></>,external:<><path d="M15 3h6v6M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></>,chevron:<path d="m9 18 6-6-6-6"/>,github:<><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3.3-.4 6.8-1.6 6.8-7.4A5.8 5.8 0 0 0 19.3 3 5.4 5.4 0 0 0 19.1 0S17.9-.4 15 1.5a14 14 0 0 0-6 0C6.1-.4 4.9 0 4.9 0a5.4 5.4 0 0 0-.2 3A5.8 5.8 0 0 0 3.2 7.1c0 5.8 3.5 7 6.8 7.4A4.8 4.8 0 0 0 9 18v4"/><path d="M9 19c-3 .9-3-1.5-4-2"/></>}[name]
+ return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>{p}</svg>
+}

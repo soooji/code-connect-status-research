@@ -1,0 +1,4 @@
+import type { ReactNode } from 'react'
+export function PageHeader({eyebrow,title,description,children}:{eyebrow:string,title:string,description:string,children?:ReactNode}){return <div className="page-header"><p className="eyebrow">{eyebrow}</p><h1>{title}</h1><p className="page-lede">{description}</p>{children}</div>}
+export function Section({id,eyebrow,title,children,className=''}:{id?:string,eyebrow?:string,title?:string,children:ReactNode,className?:string}){return <section id={id} className={`section ${className}`}>{eyebrow&&<p className="eyebrow">{eyebrow}</p>}{title&&<h2>{title}</h2>}{children}</section>}
+export function Callout({tone='blue',title,children}:{tone?:'blue'|'pink'|'red',title:string,children:ReactNode}){return <aside className={`callout ${tone}`}><span></span><div><strong>{title}</strong><p>{children}</p></div></aside>}

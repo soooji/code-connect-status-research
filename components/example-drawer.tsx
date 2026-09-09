@@ -1,0 +1,13 @@
+'use client'
+import { usePathname, useRouter } from 'next/navigation'
+import { useCallback,useEffect,useRef } from 'react'
+import type { CodeConnectExample } from '@/data/features'
+import { CodeBlock } from './code-block'
+import { Icon } from './icons'
+export function ExampleDrawer({example}:{example?:CodeConnectExample}){
+ const router=useRouter(),path=usePathname(),closeButton=useRef<HTMLButtonElement>(null),lastFocus=useRef<HTMLElement|null>(null)
+ const close=useCallback(()=>router.push(path,{scroll:false}),[path,router])
+ useEffect(()=>{if(!example)return;lastFocus.current=document.activeElement as HTMLElement;document.body.classList.add('drawer-open');requestAnimationFrame(()=>closeButton.current?.focus());const onKey=(e:KeyboardEvent)=>{if(e.key==='Escape')close();if(e.key==='Tab'){const panel=closeButton.current?.closest('[role="dialog"]');const focusable=panel?.querySelectorAll<HTMLElement>('button,a[href]');if(!focusable?.length)return;const first=focusable[0],last=focusable[focusable.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}};addEventListener('keydown',onKey);return()=>{removeEventListener('keydown',onKey);document.body.classList.remove('drawer-open');lastFocus.current?.focus()}},[close,example])
+ if(!example)return null
+ return <div className="drawer-layer"><button className="drawer-backdrop" onClick={close} aria-label="Close example" tabIndex={-1}/><aside className="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title"><div className="drawer-head"><div><span>{example.category}</span><h2 id="drawer-title">{example.title}</h2></div><button ref={closeButton} onClick={close} aria-label="Close example drawer"><Icon name="close"/></button></div><div className="drawer-body"><p className="drawer-description">{example.description}</p><div className="figma-side"><span className="figma-icon">F</span><div><small>FIGMA INSTANCE</small><strong>{example.figmaExample.component}</strong></div>{example.figmaExample.properties.map(p=><dl key={p.label}><dt>{p.label}</dt><dd>{p.value}</dd></dl>)}</div><div><p className="mini-label">Template</p><CodeBlock code={example.templateCode}/></div><div><p className="mini-label">Resulting output</p><CodeBlock code={example.outputCode} filename="Dev Mode output" language="TSX"/></div><div className="drawer-notes"><div><p className="mini-label">When to use it</p><p>{example.whenToUse}</p></div><div><p className="mini-label warning">Important caveat</p><ul>{example.caveats.map(x=><li key={x}>{x}</li>)}</ul></div></div></div></aside></div>
+}

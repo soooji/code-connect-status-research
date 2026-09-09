@@ -1,0 +1,1 @@
+export function ComponentTree({lines}:{lines:readonly string[]}){return <div className="component-tree" aria-label="Figma component tree"><div className="tree-toolbar"><span></span><span>Layers</span></div><pre>{lines.map((line,i)=><span key={line} className={line.includes('connected')?'connected':i===0?'root':''}>{line}</span>)}</pre></div>}
