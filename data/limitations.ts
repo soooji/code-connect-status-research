@@ -1,0 +1,10 @@
+export const limitationGroups = [
+  { title:'Code Connect UI', eyebrow:'Authoring surface', items:['The UI is faster for simple mappings but less capable than CLI templates for dynamic examples.','It does not provide the same fully custom Inspect snippet control as source-controlled templates.','CLI-created mappings remain source-controlled and are edited through code.','GitHub integration, plan, seat, library, and Dev Mode requirements vary by organization; confirm current entitlement.'] },
+  { title:'Template boundaries', eyebrow:'Ongoing ownership', items:['Mapping remains manual and design/code APIs can drift.','Renamed properties or variants can invalidate lookups and translations.','Complex components need intentional modeling rather than one giant template.','Large, heterogeneous libraries create review and maintenance overhead.'] },
+  { title:'Composition', eyebrow:'Tree semantics', items:['Slot traversal is deliberate and connectedInstances is shallow.','Unmapped children cannot automatically become production components.','Nested connected components require explicit discovery and template execution.','A free-form Figma layer tree does not automatically become your React tree.'] },
+  { title:'AI & MCP', eyebrow:'Context, not correctness', items:['Code Connect improves context; it cannot guarantee correct generated code.','Unmapped design-system components reduce the quality of retrieved context.','Application state, data, and business logic still have to be inferred.','Testing, accessibility checks, and human review remain required.'] },
+] as const
+
+export const replacementRows = [
+ ['Design → React component mapping','Yes','Code Connect'],['Dev Mode implementation snippet','Yes','CLI templates'],['AI implementation context','Yes','Code Connect + MCP'],['Component documentation','Partial','Storybook / docs'],['Unit behavior validation','No','Tests'],['Visual regression','No','Chromatic / Playwright / etc.'],['Accessibility validation','No','axe / tests / manual'],['Type correctness','No','TypeScript'],['Runtime correctness','No','Tests'],['Automatic Figma/code synchronization','No','Governance / tooling'],
+] as const
